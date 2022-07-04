@@ -1,7 +1,7 @@
 import axios from "axios";
 import API_URL from './Constants';
 
-const LoginService = () => {
+const LoginService = (email, password) => {
     return axios
       .post(API_URL + "login", {
         email,
@@ -9,7 +9,8 @@ const LoginService = () => {
       })
       .then(response => {
         if (response.data.access_token) {
-          localStorage.setItem("user", JSON.stringify(response.data));
+          localStorage.setItem("token", JSON.stringify(response.data.access_token));
+          localStorage.setItem("user", response.data.user);
         }console.log(response);
         
         return response.data;

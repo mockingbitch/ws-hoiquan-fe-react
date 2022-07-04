@@ -1,14 +1,16 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { LoginService } from '../services/UserService';
+import { useHistory } from 'react-router-dom';
 
 const Login = () => {
+    let history = useHistory();
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState('');
     const [data, setData] = useState({
         email: "",
         password: ""
       }
-    )
+    );
 
     const handleOnChange = useCallback(event => {
         const { name, value } = event.target;
@@ -16,28 +18,28 @@ const Login = () => {
       }
     );
 
-    const handleLogin = () => {
-        
-        
-        // AuthService.login(username, password).then(
-        //   () => {
-        //     this.props.history.push("/profile");
-        //     window.location.reload();
-        //   },
-        //   error => {
-        //     const resMessage =
-        //       (error.response &&
-        //         error.response.data &&
-        //         error.response.data.message) ||
-        //       error.message ||
-        //       error.toString();
-        //     this.setState({
-        //       loading: false,
-        //       message: resMessage
-        //     });
-        //   }
-        // );
-      }
+    
+    const handleLogin = async (e) => {
+      e.preventDefault();
+      setMessage("");
+      setLoading(true);
+      await LoginService(data.email, data.password).then(
+        () => {
+          history.push("/home");
+          window.location.reload();
+        },
+        (error) => {
+          const resMessage =
+            (error.response &&
+              error.response.data &&
+              error.response.data.message) ||
+            error.message ||
+            error.toString();
+          setLoading(false);
+          setMessage(resMessage);
+        }
+      );
+    };
 
     return (
         <div className="col-md-12">
@@ -68,9 +70,9 @@ const Login = () => {
                 </div>
                 <div className="form-group d-flex justify-content-center my-3">
                   <button type="submit" onClick={handleLogin} className="btn btn-primary btn-block">
-                    {/* {loading && (
+                    {loading && (
                       <span className="spinner-border spinner-border-sm"></span>
-                    )} */}
+                    )}
                     <span>Login</span>
                   </button>
                 </div>
